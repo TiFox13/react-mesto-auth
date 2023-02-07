@@ -66,8 +66,41 @@ padding-bottom: 50px;
     line-height: 22px;
 
 }
+.save-button_auth:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
 
 .link_auth {
     color:  white;
-    margin: 0 auto;
+    margin: 0 15.5%;
+}
+
+
+.popup__container_auth {
+    width: 430px;
+    margin: 50px auto;
+}
+
+
+.popup-auth-result { 
+padding: 60px 0;
+}
+
+.auth-result-icon_ok{
+    margin: 0 auto 32px;
+    width: 120px;
+    height: 120px;
+    background-image: url(../../images/yes.svg);
+}
+
+.auth-result-heading_ok {
+    margin: 0 36px;
+    padding: 0;
+    max-width: 358;
+    box-sizing: border-box;
+    font-weight: 900;
+font-size: 24px;
+line-height: 29px;
+text-align: center;
 }

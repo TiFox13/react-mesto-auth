@@ -1,6 +1,10 @@
 import React from 'react';
 import {Route, Routes, Redirect, Navigate } from 'react-router-dom';
-import ProtectedRoute from "./ProtectedRoute";
+import ProtectedRouteElement from "./ProtectedRoute";
+import Login from './Login.js';
+import Register from './Register.js';
+import * as Auth from './Auth.js'
+
 import logo from '../logo.svg';
 
 import Header from './Header.js'
@@ -24,6 +28,7 @@ function App() {
   const [currentUser, setCurrentUser] = React.useState([]);
   const [currentCard, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false)
+  const [user, setUser] = React.useState({})
 
   //Забираем с сервера данные о пользователе
   React.useEffect(() => {
@@ -178,55 +183,45 @@ function App() {
       })
   }
 
+  function handleLogin() {
+    setLoggedIn(true)
+  }
+
+  
+  function tokenCheck() {
+    const jwt =localStorage.getItem('jwt');
+    Auth.getToken()
+    .then((res) =>{
+      setLoggedIn(true);
+      setUser({
+        email: res.email,
+        password: res.password,
+      })
+
+    })
+  }
+
   return (
   
      <div className = "page">
         <div className="page__content">
           <Routes>
-<Route path='/sign-up' element={
-  <div>
-  <Header />
-      
-        <div className='auth'>
-          <form className='form_auth' name='регистрация' method='post' >
-            <h2 className="form__heading_auth">Регистрация</h2>
-            <label className = "form__input-field_auth">
-              <input  type="url" id ="email-input" className="form__item_auth form__item_register-email" name="email" placeholder="Email" required minLength="2" maxLength="40" />
-              <span className = "form__item-error account-name-input-error"></span>
-            </label>
-            <label className = "form__input-field_auth">
-              <input  type="password" id ="password-input" className="form__item_auth form__item_register-password" name="password" placeholder="Пароль" required minLength="4" maxLength="200" />
-              <span className = "form__item-error account-about-input-error"></span>
-            </label>
-            <input type="submit"  className="save-button_auth" value='Зарегистрироваться' aria-label="Зарегистрироваться" />
-          </form>
-          <a className="link link_auth">Уже зарегистрированы? Войти</a>
-        </div>
-        </div>
-} />
 
-<Route path='/sign-in' element={
+<Route path='/sign-up' element={
     <div>
     <Header />
-   <div className='auth'>
-   <form className='form_auth' name='вход' method='post' >
-     <h2 className="form__heading_auth">Вход</h2>
-     <label className = "form__input-field_auth">
-       <input  type="url" id ="email-input" className="form__item_auth form__item_register-email" name="email" placeholder="Email" required minLength="2" maxLength="40" />
-       <span className = "form__item-error account-name-input-error"></span>
-     </label>
-     <label className = "form__input-field_auth">
-       <input  type="password" id ="password-input" className="form__item_auth form__item_register-password" name="password" placeholder="Пароль" required minLength="4" maxLength="200" />
-       <span className = "form__item-error account-about-input-error"></span>
-     </label>
-     <input type="submit"  className="save-button_auth" value='Войти' aria-label="Войти" />
-   </form>
- 
- </div>
+   <Register />
  </div>
 }/>
 
-<Route path='/' element={ <ProtectedRoute loggedIn={loggedIn} element={
+<Route path='/sign-in' element={
+  <div>
+  <Header />
+      <Login  handleLogin={handleLogin}/>
+        </div>
+} />
+
+<Route path='/' element={ <ProtectedRouteElement loggedIn={loggedIn} element={
   <CurrentUserContext.Provider value={currentUser}>
               <CurrentCardContext.Provider value={currentCard}> 
                 <Header />
@@ -241,7 +236,7 @@ function App() {
 
               </CurrentCardContext.Provider>
               </CurrentUserContext.Provider>  
-}/>
+  }/>
 }/>
 
 </Routes>
