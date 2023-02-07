@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Routes, Redirect, Navigate } from 'react-router-dom';
+import {Route, Routes, useNavigate } from 'react-router-dom';
 import ProtectedRouteElement from "./ProtectedRoute";
 import Login from './Login.js';
 import Register from './Register.js';
@@ -183,23 +183,86 @@ function App() {
       })
   }
 
-  function handleLogin() {
-    setLoggedIn(true)
+
+
+  ///////////////////////////////////////////////////
+  const navigate = useNavigate(); 
+  const [userData, setUserData] = React.useState({
+    password: '',
+    email: '',
+
+  })
+  const [massage, setMessage] = React.useState('')
+
+function handleChange(e){
+    const {name, value} = e.target;
+
+    setUserData({
+      ...userData,
+      [name]: value
+    });
   }
 
+
+  function handleLogin(e) {
+    e.preventDefault();
+    if (!userData.email || !userData.password){
+      return;
+    }
+
+    Auth.login(userData.email, userData.password)
+      .then((data) => {
+        if (data.token){
+          localStorage.setItem('jwt', data.token)
+          setLoggedIn(true)
+          console.log(data.token)
+          setUserData({email: '', password: ''});
+          navigate('/');
+        }
+      })
+      .catch(() => {
+        setMessage('Что-то пошло не так! Попоробуйте еще раз.')
+        console.log(massage)
+      })
+    }
+
   
+  function handleRegister(e) {
+ 
+    e.preventDefault()
+      let {password, email} = userData;
+      Auth.register(email, password)
+      .then(() => {
+        setMessage('Вы успешно зарегистрировались!')
+        navigate('/sign-in', {replace: true});
+      })
+      .catch(() => {
+        setMessage('Что-то пошло не так! Попоробуйте еще раз.')
+      })
+
+  }
+  
+  React.useEffect(() => {
+    tokenCheck();
+  }, [])
+
+
   function tokenCheck() {
     const jwt =localStorage.getItem('jwt');
-    Auth.getToken()
+    console.log(jwt)
+    if (jwt) {
+      Auth.getToken(jwt)
     .then((res) =>{
       setLoggedIn(true);
       setUser({
         email: res.email,
         password: res.password,
+      }) 
+      navigate('/')
       })
-
-    })
+    }
   }
+
 
   return (
   
@@ -210,14 +273,14 @@ function App() {
 <Route path='/sign-up' element={
     <div>
     <Header />
-   <Register />
+   <Register handleChange={handleChange} handleSubmit={handleRegister} userData={userData} />
  </div>
 }/>
 
 <Route path='/sign-in' element={
   <div>
   <Header />
-      <Login  handleLogin={handleLogin}/>
+      <Login handleChange={handleChange} handleSubmit={handleLogin} userData={userData}/>
         </div>
 } />
 

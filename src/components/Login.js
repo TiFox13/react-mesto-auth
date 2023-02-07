@@ -1,51 +1,8 @@
 import {React, useState} from "react";
-import { Link, useNavigate } from 'react-router-dom'; 
-import * as Auth from './Auth.js'
 
 
-function Login({handleLogin}) {
 
-  const navigate = useNavigate(); 
-
-  const [formValue, setFormValue] = useState({
-    email: '',
-    password: '',
-  })
-  const [massage, setMessage] = useState('')
-
-  function handleChange(e){
-    const {name, value} = e.target;
-
-    setFormValue({
-      ...formValue,
-      [name]: value
-    });
-  }
- 
-
- function handleSubmit(e){
-    e.preventDefault();
-     
-    if (!formValue.email || !formValue.password){
-      return;
-    }
-
-    Auth.login(formValue.email, formValue.password)
-      .then((data) => {
-        if (data.token){
-          localStorage.setItem('jwt', data.jwt)
-
-          handleLogin();
-
-          setFormValue({email: '', password: ''});
-          navigate('/');
-        }
-      })
-      .catch(() => {
-        setMessage('Что-то пошло не так! Попоробуйте еще раз.')
-        console.log(massage)
-      })
-    }
+function Login({handleSubmit, handleChange, userData}) {
 
  return (
     <div className='auth'>
