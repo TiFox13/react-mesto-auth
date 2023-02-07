@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Routes, useNavigate } from 'react-router-dom';
+import {Route, Routes, useNavigate, Link } from 'react-router-dom';
 import ProtectedRouteElement from "./ProtectedRoute";
 import Login from './Login.js';
 import Register from './Register.js';
@@ -215,7 +215,6 @@ function handleChange(e){
         if (data.token){
           localStorage.setItem('jwt', data.token)
           setLoggedIn(true)
-          console.log(data.token)
           setUserData({email: '', password: ''});
           navigate('/');
         }
@@ -249,15 +248,12 @@ function handleChange(e){
 
   function tokenCheck() {
     const jwt =localStorage.getItem('jwt');
-    console.log(jwt)
+
     if (jwt) {
       Auth.getToken(jwt)
     .then((res) =>{
       setLoggedIn(true);
-      setUser({
-        email: res.email,
-        password: res.password,
-      }) 
+      setUser(res.data);
       navigate('/')
       })
     }
@@ -272,14 +268,22 @@ function handleChange(e){
 
 <Route path='/sign-up' element={
     <div>
-    <Header />
+    <Header>
+    <Link to='/sign-in' className="link link_header">
+    Войти
+         </Link>
+         </Header> 
    <Register handleChange={handleChange} handleSubmit={handleRegister} userData={userData} />
  </div>
 }/>
 
 <Route path='/sign-in' element={
   <div>
-  <Header />
+    <Header>
+    <Link to='/sign-up' className="link link_header">
+    Регистрация
+         </Link>
+         </Header> 
       <Login handleChange={handleChange} handleSubmit={handleLogin} userData={userData}/>
         </div>
 } />
@@ -287,7 +291,15 @@ function handleChange(e){
 <Route path='/' element={ <ProtectedRouteElement loggedIn={loggedIn} element={
   <CurrentUserContext.Provider value={currentUser}>
               <CurrentCardContext.Provider value={currentCard}> 
-                <Header />
+              <Header>
+                <div className='header_userEmail-block'>
+                  <h3 className='header_userEmail'>{user.email}</h3>
+    <Link to='/sign-in' className="link link_header link_esc">
+    Выйти
+         </Link>
+                </div>
+                
+         </Header> 
                 <Main card={handleCardDelClick} onCardDelete={handlePreDeleteClick} onCardLike={handleCardLike}  onCardClick={handleCardClick} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} />
                 <Footer />
 
