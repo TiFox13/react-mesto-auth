@@ -194,9 +194,7 @@ function App() {
   
   const [massage, setMessage] = React.useState('')
 
-
   function handleLogin(email, password ) {
-
     Auth.login(email, password)
       .then((data) => {      
         if (data.token){
@@ -222,18 +220,14 @@ function App() {
     function handleInfoTooltipOpen() {
       setInfoTooltipOpened(true);
     }
-   
   
-  function handleRegister(email, password) {
+    function handleRegister(email, password) {
  
       Auth.register(email, password)
       .then(() => {
         setMessage('Вы успешно зарегистрировались!')
         setStatusForInfoTooltip('ok')
         handleInfoTooltipOpen()
-      
-       // navigate('/sign-in', {replace: true});
-
       })
       .catch(() => {
         setMessage('Что-то пошло не так! Попоробуйте еще раз.')
@@ -301,8 +295,8 @@ function App() {
   <CurrentUserContext.Provider value={currentUser}>
               <CurrentCardContext.Provider value={currentCard}> 
               <Header>
-                <div className='header_userEmail-block'>
-                  <h3 className='header_userEmail'>{user.email}</h3>
+                <div className='header__userEmail-block'>
+                  <h3 className='header__userEmail'>{user.email}</h3>
     <button className="esc" onClick={signOut}>
     Выйти
          </button>

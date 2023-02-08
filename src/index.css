@@ -56,3 +56,22 @@
 @import url(./blocks/popup-image/__image/popup-image__image.css);
 @import url(./blocks/popup-image/__place-info/popup-image__place-info.css);
 
+
+@import url(./blocks/auth/auth.css);
+@import url(./blocks/esc/esc.css);
+@import url(./blocks/link/_auth/link_auth.css);
+@import url(./blocks/save-button/_auth/save-button_auth.css);
+@import url(./blocks/form/_auth/form_auth.css);
+@import url(./blocks/form/__item/_auth/form__item_auth.css);
+@import url(./blocks/form/__heading/_auth/form__heading_auth.css);
+@import url(./blocks/link/_header/link_header.css);
+@import url(./blocks/auth/__result-heading/auth__result-heading.css);
+@import url(./blocks/popup-auth-result/popup-auth-result.css);
+@import url(./blocks/popup-auth-result/__ok/auth-result-icon__ok.css);
+@import url(./blocks/popup-auth-result/__no/auth-result-icon__no.css);
+@import url(./blocks/popup/__container/_auth/popup__container_auth.css);
+@import url(./blocks/form/input-field/_auth/form__input-field_auth.css);
+@import url(./blocks/header/__userEmail-block/header__userEmail-block.css);
+@import url(./blocks/header/__userEmail/header__userEmail.css);
+@import url(./blocks/burger/burger.css);
+@import url(./blocks/burger/__line/burger__line.css);

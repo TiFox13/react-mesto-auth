@@ -5,7 +5,8 @@
 
 @media all and (max-width:550px) {
     .header__logo {
-         padding: 28px 0 31.6px 27px;
+        grid-area: 2/1;
+         padding: 28px 0 31.6px ;
     }
 }
 

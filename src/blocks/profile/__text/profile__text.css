@@ -12,7 +12,7 @@
     .profile__text {
         justify-content: center;
         column-gap: 10px;
-        grid-template-columns:189px 25px;
+        grid-template-columns: auto 25px;
 
     }
 }

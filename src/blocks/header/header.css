@@ -17,8 +17,13 @@
 
 @media all and (max-width:550px) {
     .header {
+        display: grid;
+        grid-template-rows: auto auto;
+        grid-template-columns: auto auto;
+        justify-content:space-around;
         margin: 0;
         padding-top: 0;
+        align-items: center;
     }
 }
 
