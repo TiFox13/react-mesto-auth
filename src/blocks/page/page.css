@@ -79,7 +79,7 @@ padding-bottom: 50px;
 
 .popup__container_auth {
     width: 430px;
-    margin: 50px auto;
+    margin: 150px auto;
 }
 
 
@@ -93,8 +93,15 @@ padding: 60px 0;
     height: 120px;
     background-image: url(../../images/yes.svg);
 }
+.auth-result-icon_no{
+    margin: 0 auto 32px;
+    width: 120px;
+    height: 120px;
+    background-image: url(../../images/no.svg);
+}
 
-.auth-result-heading_ok {
+
+.auth-result-heading {
     margin: 0 36px;
     padding: 0;
     max-width: 358;
@@ -106,6 +113,7 @@ text-align: center;
 }
 
 
+
 .link_header {
     color: white;
     font-weight: 400;
@@ -113,6 +121,9 @@ font-size: 18px;
 line-height: 1.22;
 text-decoration: none;
 height: 25px;
+}
+.link_header:hover {
+    opacity: 0.6;
 }
 
 .header_userEmail {
@@ -130,6 +141,14 @@ margin: 0 24px 0 0;
 
 }
 
-.link_esc {
+.esc {
 color: #A9A9A9;
+font-weight: 400;
+font-size: 18px;
+line-height: 1.22;
+background-color: #000;
+}
+.esc:hover {
+    cursor: pointer;
+    opacity: 0.6;
 }

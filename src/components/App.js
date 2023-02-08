@@ -3,6 +3,7 @@ import {Route, Routes, useNavigate, Link } from 'react-router-dom';
 import ProtectedRouteElement from "./ProtectedRoute";
 import Login from './Login.js';
 import Register from './Register.js';
+import InfoTooltip from './InfoTooltip.js'
 import * as Auth from './Auth.js'
 
 import logo from '../logo.svg';
@@ -29,6 +30,8 @@ function App() {
   const [currentCard, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false)
   const [user, setUser] = React.useState({})
+  const  [infoTooltipOpen, setInfoTooltipOpened] = React.useState(false);
+  const [statusForInfoTooltip, setStatusForInfoTooltip] =React.useState('')
 
   //Забираем с сервера данные о пользователе
   React.useEffect(() => {
@@ -89,6 +92,7 @@ function App() {
     setAddPlaceOpened(false);
     setPreDeleteOpened(false)
     setSelectedCard({});
+    setInfoTooltipOpened(false)
   }
 
   //отправляет на сервер новые данные по юзеру
@@ -187,58 +191,56 @@ function App() {
 
   ///////////////////////////////////////////////////
   const navigate = useNavigate(); 
-  const [userData, setUserData] = React.useState({
-    password: '',
-    email: '',
-
-  })
+  
   const [massage, setMessage] = React.useState('')
 
-function handleChange(e){
-    const {name, value} = e.target;
 
-    setUserData({
-      ...userData,
-      [name]: value
-    });
-  }
+  function handleLogin(email, password ) {
 
-
-  function handleLogin(e) {
-    e.preventDefault();
-    if (!userData.email || !userData.password){
-      return;
-    }
-
-    Auth.login(userData.email, userData.password)
-      .then((data) => {
+    Auth.login(email, password)
+      .then((data) => {      
         if (data.token){
           localStorage.setItem('jwt', data.token)
           setLoggedIn(true)
-          setUserData({email: '', password: ''});
-          navigate('/');
         }
       })
+      .then(()=> {
+        Auth.getToken(localStorage.getItem('jwt'))
+        .then((res) =>{
+          setUser(res.data);
+          navigate('/')
+      })
+    })
       .catch(() => {
         setMessage('Что-то пошло не так! Попоробуйте еще раз.')
-        console.log(massage)
+        setStatusForInfoTooltip('no')
+        handleInfoTooltipOpen()
       })
+      setMessage('')  
     }
 
+    function handleInfoTooltipOpen() {
+      setInfoTooltipOpened(true);
+    }
+   
   
-  function handleRegister(e) {
+  function handleRegister(email, password) {
  
-    e.preventDefault()
-      let {password, email} = userData;
       Auth.register(email, password)
       .then(() => {
         setMessage('Вы успешно зарегистрировались!')
-        navigate('/sign-in', {replace: true});
+        setStatusForInfoTooltip('ok')
+        handleInfoTooltipOpen()
+      
+       // navigate('/sign-in', {replace: true});
+
       })
       .catch(() => {
         setMessage('Что-то пошло не так! Попоробуйте еще раз.')
+        setStatusForInfoTooltip('no')
+        handleInfoTooltipOpen()
+        
       })
-
   }
   
   React.useEffect(() => {
@@ -250,7 +252,7 @@ function handleChange(e){
     const jwt =localStorage.getItem('jwt');
 
     if (jwt) {
-      Auth.getToken(jwt)
+      Auth.getToken(localStorage.getItem('jwt'))
     .then((res) =>{
       setLoggedIn(true);
       setUser(res.data);
@@ -258,6 +260,11 @@ function handleChange(e){
       })
     }
   }
+
+    function signOut(){
+      localStorage.removeItem('jwt');
+      navigate('/sign-in');
+    }
 
 
   return (
@@ -273,7 +280,8 @@ function handleChange(e){
     Войти
          </Link>
          </Header> 
-   <Register handleChange={handleChange} handleSubmit={handleRegister} userData={userData} />
+   <Register handleSubmit={handleRegister} />
+   <InfoTooltip isOpen={infoTooltipOpen} onClose={closeAllPopups} massage={massage} status={statusForInfoTooltip}/>
  </div>
 }/>
 
@@ -284,7 +292,8 @@ function handleChange(e){
     Регистрация
          </Link>
          </Header> 
-      <Login handleChange={handleChange} handleSubmit={handleLogin} userData={userData}/>
+      <Login handleSubmit={handleLogin}/>
+      <InfoTooltip isOpen={infoTooltipOpen} onClose={closeAllPopups} massage={massage} status={statusForInfoTooltip}/>
         </div>
 } />
 
@@ -294,9 +303,9 @@ function handleChange(e){
               <Header>
                 <div className='header_userEmail-block'>
                   <h3 className='header_userEmail'>{user.email}</h3>
-    <Link to='/sign-in' className="link link_header link_esc">
+    <button className="esc" onClick={signOut}>
     Выйти
-         </Link>
+         </button>
                 </div>
                 
          </Header> 
@@ -308,6 +317,7 @@ function handleChange(e){
                 <EditAvatarPopup onUpdateAvatar={handleUpdateAvatar} isOpen={editAvatarOpen} onClose={closeAllPopups} /> 
                 <PreDeletePopup deletedCard={deletedCard} onDeleteCard={hendleCardDelete} isOpen={preDeleteOpen} onClose={closeAllPopups}/> 
                 <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
+
 
               </CurrentCardContext.Provider>
               </CurrentUserContext.Provider>  
