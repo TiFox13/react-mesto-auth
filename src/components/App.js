@@ -4,7 +4,7 @@ import ProtectedRouteElement from "./ProtectedRoute";
 import Login from './Login.js';
 import Register from './Register.js';
 import InfoTooltip from './InfoTooltip.js'
-import * as Auth from './Auth.js'
+import * as Auth from '../utils/Auth.js'
 
 import logo from '../logo.svg';
 
@@ -35,6 +35,7 @@ function App() {
 
   //Забираем с сервера данные о пользователе
   React.useEffect(() => {
+    if (loggedIn) {      //если loggedIn изменяется, то надо запустить этот useEffect, но исполнить запрос ТОЛЬКО если  loggedIn будет true
     api.getUserInfo()
       .then((res) => {
         setCurrentUser(res)
@@ -42,10 +43,12 @@ function App() {
       .catch((error) => {
         console.log(error); // выведем ошибку в консоль
       })
-  }, [])
+    }
+  }, [loggedIn])
 
   // забираем с сервера карточки
   React.useEffect(() => {
+    if (loggedIn) {      //если loggedIn изменяется, то надо запустить этот useEffect, но исполнить запрос ТОЛЬКО если  loggedIn будет true
     api.getInitialCards()
       .then((res) => {
         setCards(res)
@@ -54,7 +57,8 @@ function App() {
       .catch((error) => {
         console.log(error); // выведем ошибку в консоль
       })
-  }, [])
+    }
+  }, [loggedIn] )
 
   // переменные состояния попапов ( открыты или нет?)
   const [editProfileOpen, setEditProfileOpened] = React.useState(false);
@@ -187,9 +191,6 @@ function App() {
       })
   }
 
-
-
-  ///////////////////////////////////////////////////
   const navigate = useNavigate(); 
   
   const [massage, setMessage] = React.useState('')
@@ -204,10 +205,16 @@ function App() {
       })
       .then(()=> {
         Auth.getToken(localStorage.getItem('jwt'))
-        .then((res) =>{
-          setUser(res.data);
-          navigate('/')
+          .then((res) =>{
+            setUser(res.data);
+            navigate('/')
+          })
+      .then(() => {
+        
       })
+          .catch((error) => {
+            console.log(error); // выведем ошибку в консоль
+          }) 
     })
       .catch(() => {
         setMessage('Что-то пошло не так! Попоробуйте еще раз.')
@@ -215,15 +222,15 @@ function App() {
         handleInfoTooltipOpen()
       })
       setMessage('')  
-    }
+  }
 
-    function handleInfoTooltipOpen() {
-      setInfoTooltipOpened(true);
-    }
+  function handleInfoTooltipOpen() {
+    setInfoTooltipOpened(true);
+  }
   
-    function handleRegister(email, password) {
- 
-      Auth.register(email, password)
+  function handleRegister(email, password) {
+
+    Auth.register(email, password)
       .then(() => {
         setMessage('Вы успешно зарегистрировались!')
         setStatusForInfoTooltip('ok')
@@ -233,7 +240,6 @@ function App() {
         setMessage('Что-то пошло не так! Попоробуйте еще раз.')
         setStatusForInfoTooltip('no')
         handleInfoTooltipOpen()
-        
       })
   }
   
@@ -247,62 +253,62 @@ function App() {
 
     if (jwt) {
       Auth.getToken(localStorage.getItem('jwt'))
-    .then((res) =>{
-      setLoggedIn(true);
-      setUser(res.data);
-      navigate('/')
-      })
+        .then((res) =>{
+          setLoggedIn(true);
+          setUser(res.data);
+          navigate('/')
+          })
+        .catch((error) => {
+          console.log(error); // выведем ошибку в консоль
+        })
     }
   }
 
-    function signOut(){
-      localStorage.removeItem('jwt');
-      navigate('/sign-in');
-    }
+  function signOut(){
+    localStorage.removeItem('jwt');
+    navigate('/sign-in');
+  }
 
 
   return (
-  
-     <div className = "page">
-        <div className="page__content">
-          <Routes>
-
-<Route path='/sign-up' element={
-    <div>
-    <Header>
-    <Link to='/sign-in' className="link link_header">
-    Войти
-         </Link>
-         </Header> 
-   <Register handleSubmit={handleRegister} />
-   <InfoTooltip isOpen={infoTooltipOpen} onClose={closeAllPopups} massage={massage} status={statusForInfoTooltip}/>
- </div>
-}/>
-
-<Route path='/sign-in' element={
-  <div>
-    <Header>
-    <Link to='/sign-up' className="link link_header">
-    Регистрация
-         </Link>
-         </Header> 
-      <Login handleSubmit={handleLogin}/>
-      <InfoTooltip isOpen={infoTooltipOpen} onClose={closeAllPopups} massage={massage} status={statusForInfoTooltip}/>
-        </div>
-} />
-
-<Route path='/' element={ <ProtectedRouteElement loggedIn={loggedIn} element={
-  <CurrentUserContext.Provider value={currentUser}>
-              <CurrentCardContext.Provider value={currentCard}> 
+    <div className = "page">
+      <div className="page__content">
+        <Routes>
+          <Route path='/sign-up' element={
+            <div>
               <Header>
-                <div className='header__userEmail-block'>
-                  <h3 className='header__userEmail'>{user.email}</h3>
-    <button className="esc" onClick={signOut}>
-    Выйти
-         </button>
-                </div>
-                
-         </Header> 
+                <Link to='/sign-in' className="link link_header">
+                  Войти
+                </Link>
+              </Header> 
+              <Register handleSubmit={handleRegister} />
+              <InfoTooltip isOpen={infoTooltipOpen} onClose={closeAllPopups} massage={massage} status={statusForInfoTooltip}/>
+            </div>
+          }/>
+
+          <Route path='/sign-in' element={
+            <div>
+              <Header>
+              <Link to='/sign-up' className="link link_header">
+              Регистрация
+                  </Link>
+                  </Header> 
+                <Login handleSubmit={handleLogin}/>
+                <InfoTooltip isOpen={infoTooltipOpen} onClose={closeAllPopups} massage={massage} status={statusForInfoTooltip}/>
+                  </div>
+          }/>
+
+          <Route path='/' element={ <ProtectedRouteElement loggedIn={loggedIn} element={
+            <CurrentUserContext.Provider value={currentUser}>
+              <CurrentCardContext.Provider value={currentCard}> 
+                <Header>
+                  <div className='header__userEmail-block'>
+                    <h3 className='header__userEmail'>{user.email}</h3>
+                    <button className="esc" onClick={signOut}>
+                      Выйти
+                    </button>
+                  </div>
+                </Header> 
                 <Main card={handleCardDelClick} onCardDelete={handlePreDeleteClick} onCardLike={handleCardLike}  onCardClick={handleCardClick} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} />
                 <Footer />
 
@@ -312,17 +318,14 @@ function App() {
                 <PreDeletePopup deletedCard={deletedCard} onDeleteCard={hendleCardDelete} isOpen={preDeleteOpen} onClose={closeAllPopups}/> 
                 <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
 
-
               </CurrentCardContext.Provider>
-              </CurrentUserContext.Provider>  
-  }/>
-}/>
-
-</Routes>
-
-          </div>
-        </div>  
-    )
+            </CurrentUserContext.Provider>  
+          }/>
+          }/>
+        </Routes>
+      </div>
+    </div>  
+  )
 }
 
 export default App;
