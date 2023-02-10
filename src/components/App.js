@@ -289,13 +289,13 @@ function App() {
           <Route path='/sign-in' element={
             <div>
               <Header>
-              <Link to='/sign-up' className="link link_header">
-              Регистрация
-                  </Link>
-                  </Header> 
-                <Login handleSubmit={handleLogin}/>
-                <InfoTooltip isOpen={infoTooltipOpen} onClose={closeAllPopups} massage={massage} status={statusForInfoTooltip}/>
-                  </div>
+                <Link to='/sign-up' className="link link_header">
+                  Регистрация
+                </Link>
+              </Header> 
+              <Login handleSubmit={handleLogin}/>
+              <InfoTooltip isOpen={infoTooltipOpen} onClose={closeAllPopups} massage={massage} status={statusForInfoTooltip}/>
+            </div>
           }/>
 
           <Route path='/' element={ <ProtectedRouteElement loggedIn={loggedIn} element={
